@@ -1,6 +1,6 @@
-# EverGiven - Order Management API
+# EverGiven - Order Management API for GPT Integration
 
-A lightweight Go-based REST API for managing orders from China, optimized for Raspberry Pi 5 deployment and custom GPT integration.
+A lightweight Go-based REST API for managing orders from China with ChatGPT parsing screenshots from PDD, optimized for Raspberry Pi 5 deployment and custom GPT integration.
 
 ## Features
 
