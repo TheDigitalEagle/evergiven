@@ -38,16 +38,30 @@ echo "⚙️  Step 3: Updating tunnel configuration..."
 CURRENT_USER=$(whoami)
 USER_HOME=$(eval echo ~$CURRENT_USER)
 
-# Get tunnel ID
-TUNNEL_ID=$(cloudflared tunnel list | grep -v "ID" | head -1 | awk '{print $1}')
+# Get tunnel ID - improved parsing
+echo "📋 Available tunnels:"
+cloudflared tunnel list
+
+echo ""
+echo "Enter the tunnel ID from the list above:"
+read TUNNEL_ID
+
 if [ -z "$TUNNEL_ID" ]; then
-    echo "❌ No tunnel found. Creating new tunnel..."
+    echo "❌ No tunnel ID provided. Creating new tunnel..."
     TUNNEL_NAME="evergiven-$(date +%s)"
     cloudflared tunnel create $TUNNEL_NAME
     TUNNEL_ID=$(cloudflared tunnel list | grep $TUNNEL_NAME | awk '{print $1}')
+    echo "✅ Created new tunnel: $TUNNEL_ID"
 fi
 
 echo "🚇 Using tunnel ID: $TUNNEL_ID"
+
+# Verify tunnel exists
+if ! cloudflared tunnel list | grep -q "$TUNNEL_ID"; then
+    echo "❌ Tunnel ID $TUNNEL_ID not found. Available tunnels:"
+    cloudflared tunnel list
+    exit 1
+fi
 
 # Create updated config
 mkdir -p "$USER_HOME/.cloudflared"
