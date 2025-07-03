@@ -34,11 +34,24 @@ if ! command -v docker &> /dev/null; then
     exit 0
 fi
 
-# Install Docker Compose if not present
-if ! command -v docker-compose &> /dev/null; then
+# Check for Docker Compose (newer versions use 'docker compose' without hyphen)
+if command -v docker-compose &> /dev/null; then
+    DOCKER_COMPOSE_CMD="docker-compose"
+elif docker compose version &> /dev/null; then
+    DOCKER_COMPOSE_CMD="docker compose"
+else
     echo "📋 Installing Docker Compose..."
     sudo apt-get install docker-compose-plugin -y
+    # Check again after installation
+    if docker compose version &> /dev/null; then
+        DOCKER_COMPOSE_CMD="docker compose"
+    else
+        echo "❌ Failed to install Docker Compose"
+        exit 1
+    fi
 fi
+
+echo "🔧 Using Docker Compose command: $DOCKER_COMPOSE_CMD"
 
 # Create data directory
 echo "📁 Creating data directory..."
@@ -60,7 +73,7 @@ EOF
 
 # Build and start the application
 echo "🔨 Building and starting EverGiven API..."
-docker-compose up -d api
+$DOCKER_COMPOSE_CMD up -d api
 
 # Wait for service to start
 echo "⏳ Waiting for service to start..."
@@ -87,11 +100,11 @@ if curl -s http://localhost:8080/health > /dev/null; then
     echo "   - DELETE /orders/{id}"
     echo ""
     echo "📊 Monitor with: docker stats"
-    echo "📝 View logs with: docker-compose logs -f api"
-    echo "🛑 Stop with: docker-compose down"
+    echo "📝 View logs with: $DOCKER_COMPOSE_CMD logs -f api"
+    echo "🛑 Stop with: $DOCKER_COMPOSE_CMD down"
 else
     echo "❌ API health check failed"
-    echo "📝 Check logs with: docker-compose logs api"
+    echo "📝 Check logs with: $DOCKER_COMPOSE_CMD logs api"
     exit 1
 fi
 
@@ -103,7 +116,7 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
     sudo systemctl enable docker
     echo "✅ Docker will start automatically on boot"
     echo "💡 To auto-start EverGiven, add to /etc/rc.local:"
-    echo "   cd $(pwd) && docker-compose up -d api"
+    echo "   cd $(pwd) && $DOCKER_COMPOSE_CMD up -d api"
 fi
 
 echo ""

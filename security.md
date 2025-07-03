@@ -129,6 +129,13 @@ curl http://YOUR_PI_IP:8080/health
 curl http://YOUR_PI_IP:8080/orders
 ```
 
+### Docker Compose Management
+```bash
+# Use the wrapper script for compatibility
+./docker-compose-wrapper.sh logs -f api
+./docker-compose-wrapper.sh restart api
+```
+
 ### With Authentication (if enabled)
 ```bash
 curl -H "X-API-Key: your-key" http://YOUR_PI_IP:8080/orders

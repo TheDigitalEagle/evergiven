@@ -21,14 +21,18 @@ git clone <your-repo>
 cd evergiven
 
 # Run with SQLite (lightweight)
-docker-compose up -d api
+# The deployment script automatically detects the correct Docker Compose command
+./deploy-pi.sh
+
+# Or manually:
+./docker-compose-wrapper.sh up -d api
 ```
 
 ### Option 2: PostgreSQL
 
 ```bash
 # Run with PostgreSQL
-docker-compose up -d
+./docker-compose-wrapper.sh up -d
 ```
 
 ## API Endpoints
@@ -184,6 +188,10 @@ DATABASE_URL=postgres://user:pass@localhost:5432/dbname
 
 ### View logs:
 ```bash
+# For newer Docker versions (recommended)
+docker compose logs -f api
+
+# For older Docker versions
 docker-compose logs -f api
 ```
 
@@ -194,7 +202,11 @@ curl http://localhost:8080/health
 
 ### Database backup (SQLite):
 ```bash
+# For newer Docker versions
 docker cp evergiven-api-1:/app/evergiven.db ./backup.db
+
+# For older Docker versions (if container name is different)
+docker cp $(docker ps -q --filter "name=evergiven-api"):/app/evergiven.db ./backup.db
 ```
 
 ## Troubleshooting
@@ -209,6 +221,11 @@ sudo kill -9 <PID>
 
 2. **Database connection failed:**
 ```bash
+# For newer Docker versions
+docker compose logs db
+docker compose restart api
+
+# For older Docker versions
 docker-compose logs db
 docker-compose restart api
 ```
@@ -235,6 +252,29 @@ sudo dphys-swapfile swapon
 ```bash
 sudo raspi-config
 # Performance Options > Overclock
+```
+
+## Docker Compose Compatibility
+
+This project includes automatic detection for both Docker Compose versions:
+
+- **Newer Docker**: `docker compose` (without hyphen)
+- **Older Docker**: `docker-compose` (with hyphen)
+
+### Using the Wrapper Script
+```bash
+# Automatically detects the correct command
+./docker-compose-wrapper.sh up -d api
+./docker-compose-wrapper.sh logs -f api
+./docker-compose-wrapper.sh down
+```
+
+### Manual Detection
+```bash
+# Check which version you have
+docker compose version
+# or
+docker-compose --version
 ```
 
 ## Development
