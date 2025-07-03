@@ -1,0 +1,151 @@
+# EverGiven Custom GPT Configuration Template
+# Use this template to configure your ChatGPT Custom GPT
+
+name: "EverGiven Order Manager"
+description: "Manage and track orders from China with dual currency support (CNY/USD)"
+
+# Replace YOUR_PI_IP with your Raspberry Pi's actual IP address
+base_url: "http://YOUR_PI_IP:8080"
+
+# API Actions Configuration
+actions:
+  - name: "list_orders"
+    description: "Get all orders from the database"
+    method: "GET"
+    path: "/orders"
+    parameters: []
+    
+  - name: "create_order"
+    description: "Create a new order"
+    method: "POST"
+    path: "/orders"
+    parameters:
+      - name: "dateOfOrder"
+        type: "string"
+        description: "Date and time of the order (ISO 8601 format)"
+        required: true
+      - name: "trackingNumber"
+        type: "string"
+        description: "Tracking number for the order"
+        required: false
+      - name: "shortDescriptOfItem"
+        type: "string"
+        description: "Brief description of the ordered item"
+        required: true
+      - name: "orderQuantity"
+        type: "integer"
+        description: "Quantity of items ordered"
+        required: true
+      - name: "costPerItemCNY"
+        type: "string"
+        description: "Cost per item in Chinese Yuan"
+        required: true
+      - name: "totalPerItemCNY"
+        type: "string"
+        description: "Total cost in Chinese Yuan"
+        required: true
+      - name: "costPerItemUSD"
+        type: "string"
+        description: "Cost per item in US Dollars"
+        required: true
+      - name: "totalPerItemUSD"
+        type: "string"
+        description: "Total cost in US Dollars"
+        required: true
+        
+  - name: "update_order"
+    description: "Update an existing order"
+    method: "PUT"
+    path: "/orders/{id}"
+    parameters:
+      - name: "id"
+        type: "integer"
+        description: "Order ID to update"
+        required: true
+        in: "path"
+      - name: "dateOfOrder"
+        type: "string"
+        description: "Date and time of the order (ISO 8601 format)"
+        required: false
+      - name: "trackingNumber"
+        type: "string"
+        description: "Tracking number for the order"
+        required: false
+      - name: "shortDescriptOfItem"
+        type: "string"
+        description: "Brief description of the ordered item"
+        required: false
+      - name: "orderQuantity"
+        type: "integer"
+        description: "Quantity of items ordered"
+        required: false
+      - name: "costPerItemCNY"
+        type: "string"
+        description: "Cost per item in Chinese Yuan"
+        required: false
+      - name: "totalPerItemCNY"
+        type: "string"
+        description: "Total cost in Chinese Yuan"
+        required: false
+      - name: "costPerItemUSD"
+        type: "string"
+        description: "Cost per item in US Dollars"
+        required: false
+      - name: "totalPerItemUSD"
+        type: "string"
+        description: "Total cost in US Dollars"
+        required: false
+        
+  - name: "delete_order"
+    description: "Delete an order"
+    method: "DELETE"
+    path: "/orders/{id}"
+    parameters:
+      - name: "id"
+        type: "integer"
+        description: "Order ID to delete"
+        required: true
+        in: "path"
+        
+  - name: "health_check"
+    description: "Check API health and database status"
+    method: "GET"
+    path: "/health"
+    parameters: []
+
+# Example Usage Instructions
+instructions: |
+  You are an order management assistant for tracking orders from China.
+  
+  Key features:
+  - Track orders with dual currency support (CNY and USD)
+  - Store tracking numbers and item descriptions
+  - Manage order quantities and costs
+  
+  When creating orders:
+  - Always provide both CNY and USD amounts
+  - Use ISO 8601 format for dates (e.g., "2024-01-15T10:30:00Z")
+  - Include tracking numbers when available
+  - Provide clear item descriptions
+  
+  When updating orders:
+  - Only include fields that need to be changed
+  - Maintain data integrity by keeping existing values for unchanged fields
+  
+  Always confirm actions with the user before making changes to the database.
+
+# Example Prompts
+example_prompts:
+  - "Show me all my orders from China"
+  - "Create a new order for 10 wireless earbuds at 299.99 CNY each"
+  - "Update the tracking number for order #5 to TRK123456789"
+  - "Delete order #3"
+  - "What's the total value of all my orders in USD?"
+
+# Security Notes
+security_notes: |
+  IMPORTANT: 
+  - Replace YOUR_PI_IP with your actual Raspberry Pi IP address
+  - Ensure your Pi is accessible from the internet if needed
+  - Consider adding authentication for production use
+  - Use HTTPS in production environments 

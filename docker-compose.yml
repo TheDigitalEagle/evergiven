@@ -1,0 +1,57 @@
+version: "3.9"
+services:
+  api:
+    build: .
+    ports:
+      - "8080:8080"
+    environment:
+      # Use SQLite for lighter resource usage on Pi
+      DATABASE_URL: sqlite:///app/evergiven.db
+      # Or use PostgreSQL if you prefer:
+      # DATABASE_URL: postgres://gptuser:gptpass@db:5432/gptdb?sslmode=disable
+      PORT: 8080
+    volumes:
+      - ./data:/app/data
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+          cpus: '0.5'
+        reservations:
+          memory: 256M
+          cpus: '0.25'
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # PostgreSQL service (optional - comment out if using SQLite)
+  # db:
+  #   image: postgres:17.5-alpine
+  #   environment:
+  #     POSTGRES_USER: gptuser
+  #     POSTGRES_PASSWORD: gptpass
+  #     POSTGRES_DB: gptdb
+  #   volumes:
+  #     - pgdata:/var/lib/postgresql/data
+  #   restart: unless-stopped
+  #   deploy:
+  #     resources:
+  #       limits:
+  #         memory: 256M
+  #         cpus: '0.25'
+  #       reservations:
+  #         memory: 128M
+  #         cpus: '0.1'
+  #   healthcheck:
+  #     test: ["CMD-SHELL", "pg_isready -U gptuser"]
+  #     interval: 10s
+  #     timeout: 5s
+  #     retries: 5
+  #     start_period: 30s
+
+  # volumes:
+  #   pgdata:
