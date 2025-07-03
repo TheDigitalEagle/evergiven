@@ -1,0 +1,309 @@
+openapi: 3.1.0
+info:
+  title: EverGiven Order Management API
+  description: Manage and track orders from China with dual currency support (CNY/USD)
+  version: 1.0.0
+  contact:
+    name: EverGiven API Support
+    url: https://evergiven.focacciafowl.com
+
+servers:
+  - url: https://evergiven.focacciafowl.com
+    description: Production server
+
+paths:
+  /health:
+    get:
+      summary: Health check
+      description: Check API health and database connectivity
+      operationId: healthCheck
+      responses:
+        '200':
+          description: API is healthy
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "healthy"
+                  timestamp:
+                    type: string
+                    format: date-time
+                    example: "2024-01-15T10:30:00Z"
+                  database:
+                    type: string
+                    example: "connected"
+
+  /orders:
+    get:
+      summary: List all orders
+      description: Retrieve all orders sorted by date (newest first)
+      operationId: listOrders
+      responses:
+        '200':
+          description: List of orders
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Order'
+        '500':
+          description: Database error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+
+    post:
+      summary: Create a new order
+      description: Create a new order with dual currency support
+      operationId: createOrder
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - dateOfOrder
+                - shortDescriptOfItem
+                - orderQuantity
+                - costPerItemCNY
+                - totalPerItemCNY
+                - costPerItemUSD
+                - totalPerItemUSD
+              properties:
+                dateOfOrder:
+                  type: string
+                  format: date-time
+                  description: Date and time of the order (ISO 8601 format)
+                  example: "2024-01-15T10:30:00Z"
+                trackingNumber:
+                  type: string
+                  description: Tracking number for the order
+                  example: "TRK123456789"
+                shortDescriptOfItem:
+                  type: string
+                  description: Brief description of the ordered item
+                  example: "Wireless Earbuds"
+                orderQuantity:
+                  type: integer
+                  minimum: 1
+                  description: Quantity of items ordered
+                  example: 10
+                costPerItemCNY:
+                  type: string
+                  pattern: '^\d+\.?\d*$'
+                  description: Cost per item in Chinese Yuan
+                  example: "299.99"
+                totalPerItemCNY:
+                  type: string
+                  pattern: '^\d+\.?\d*$'
+                  description: Total cost in Chinese Yuan
+                  example: "2999.90"
+                costPerItemUSD:
+                  type: string
+                  pattern: '^\d+\.?\d*$'
+                  description: Cost per item in US Dollars
+                  example: "42.50"
+                totalPerItemUSD:
+                  type: string
+                  pattern: '^\d+\.?\d*$'
+                  description: Total cost in US Dollars
+                  example: "425.00"
+      responses:
+        '200':
+          description: Order created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+        '400':
+          description: Invalid request data
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+        '500':
+          description: Database error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+
+  /orders/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        description: Order ID
+        schema:
+          type: integer
+          minimum: 1
+        example: 1
+
+    put:
+      summary: Update an existing order
+      description: Update an existing order by ID
+      operationId: updateOrder
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                dateOfOrder:
+                  type: string
+                  format: date-time
+                  description: Date and time of the order (ISO 8601 format)
+                  example: "2024-01-15T10:30:00Z"
+                trackingNumber:
+                  type: string
+                  description: Tracking number for the order
+                  example: "TRK123456789"
+                shortDescriptOfItem:
+                  type: string
+                  description: Brief description of the ordered item
+                  example: "Wireless Earbuds"
+                orderQuantity:
+                  type: integer
+                  minimum: 1
+                  description: Quantity of items ordered
+                  example: 10
+                costPerItemCNY:
+                  type: string
+                  pattern: '^\d+\.?\d*$'
+                  description: Cost per item in Chinese Yuan
+                  example: "299.99"
+                totalPerItemCNY:
+                  type: string
+                  pattern: '^\d+\.?\d*$'
+                  description: Total cost in Chinese Yuan
+                  example: "2999.90"
+                costPerItemUSD:
+                  type: string
+                  pattern: '^\d+\.?\d*$'
+                  description: Cost per item in US Dollars
+                  example: "42.50"
+                totalPerItemUSD:
+                  type: string
+                  pattern: '^\d+\.?\d*$'
+                  description: Total cost in US Dollars
+                  example: "425.00"
+      responses:
+        '200':
+          description: Order updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+        '400':
+          description: Invalid request data
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+        '500':
+          description: Database error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+
+    delete:
+      summary: Delete an order
+      description: Delete an order by ID
+      operationId: deleteOrder
+      responses:
+        '204':
+          description: Order deleted successfully
+        '500':
+          description: Database error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+
+components:
+  schemas:
+    Order:
+      type: object
+      properties:
+        orderId:
+          type: integer
+          description: Auto-generated order ID
+          example: 1
+        dateOfOrder:
+          type: string
+          format: date-time
+          description: Date and time of the order
+          example: "2024-01-15T10:30:00Z"
+        trackingNumber:
+          type: string
+          description: Tracking number for the order
+          example: "TRK123456789"
+        shortDescriptOfItem:
+          type: string
+          description: Brief description of the ordered item
+          example: "Wireless Earbuds"
+        orderQuantity:
+          type: integer
+          description: Quantity of items ordered
+          example: 10
+        costPerItemCNY:
+          type: string
+          description: Cost per item in Chinese Yuan
+          example: "299.99"
+        totalPerItemCNY:
+          type: string
+          description: Total cost in Chinese Yuan
+          example: "2999.90"
+        costPerItemUSD:
+          type: string
+          description: Cost per item in US Dollars
+          example: "42.50"
+        totalPerItemUSD:
+          type: string
+          description: Total cost in US Dollars
+          example: "425.00"
+      required:
+        - orderId
+        - dateOfOrder
+        - shortDescriptOfItem
+        - orderQuantity
+        - costPerItemCNY
+        - totalPerItemCNY
+        - costPerItemUSD
+        - totalPerItemUSD
+
+  securitySchemes:
+    apiKey:
+      type: apiKey
+      in: header
+      name: X-API-Key
+      description: Optional API key for authentication
+
+security:
+  - apiKey: [] 

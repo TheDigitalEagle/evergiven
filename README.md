@@ -111,34 +111,21 @@ docker stats
 
 ### Configuration for ChatGPT Custom GPT
 
-1. **Set up your Pi's IP address:**
-   - Find your Pi's IP: `hostname -I`
-   - Ensure port 8080 is accessible
+1. **Set up HTTPS tunnel** (required for ChatGPT):
+   - Use Cloudflare Tunnel: `./cloudflare-tunnel-setup.sh`
+   - Or ngrok: `./ngrok-setup.sh`
+   - Get your HTTPS URL (e.g., `https://evergiven.focacciafowl.com`)
 
 2. **Configure your Custom GPT:**
-   - Add your Pi's URL: `http://YOUR_PI_IP:8080`
-   - Use these endpoints in your GPT configuration
+   - Use the OpenAPI 3.1.0 specification: `openapi.yaml`
+   - Upload the `openapi.yaml` file to your Custom GPT
+   - Set the server URL to your HTTPS endpoint
 
-3. **Example GPT Actions:**
-```yaml
-# List all orders
-GET {{base_url}}/orders
-
-# Create new order
-POST {{base_url}}/orders
-Content-Type: application/json
-
-{
-  "dateOfOrder": "2024-01-15T10:30:00Z",
-  "trackingNumber": "TRK123456789",
-  "shortDescriptOfItem": "Wireless Earbuds",
-  "orderQuantity": 10,
-  "costPerItemCNY": "299.99",
-  "totalPerItemCNY": "2999.90",
-  "costPerItemUSD": "42.50",
-  "totalPerItemUSD": "425.00"
-}
-```
+3. **OpenAPI Specification:**
+   - **File**: `openapi.yaml`
+   - **Format**: OpenAPI 3.1.0
+   - **Server**: `https://evergiven.focacciafowl.com`
+   - **Endpoints**: All CRUD operations for orders
 
 ### Security Considerations
 
