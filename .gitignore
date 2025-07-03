@@ -1,0 +1,23 @@
+# Go build artifacts
+/evergiven
+*.exe
+*.test
+*.out
+
+# Dependency cache
+vendor/
+
+# IDE/editor stuff
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Docker artifacts
+*.log
+.env
+docker-compose.override.yml
