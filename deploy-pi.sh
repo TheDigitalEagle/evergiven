@@ -71,9 +71,22 @@ PORT=8080
 PI_IP=$PI_IP
 EOF
 
+# Ask user for database preference
+echo ""
+echo "🗄️  Database Selection:"
+echo "1) SQLite (Recommended for Pi - lighter, faster)"
+echo "2) PostgreSQL (More features, higher resource usage)"
+read -p "Choose database (1 or 2): " db_choice
+
 # Build and start the application
 echo "🔨 Building and starting EverGiven API..."
-$DOCKER_COMPOSE_CMD up -d api
+if [ "$db_choice" = "2" ]; then
+    echo "📊 Using PostgreSQL..."
+    $DOCKER_COMPOSE_CMD -f docker-compose.postgres.yml up -d
+else
+    echo "💾 Using SQLite..."
+    $DOCKER_COMPOSE_CMD up -d api
+fi
 
 # Wait for service to start
 echo "⏳ Waiting for service to start..."

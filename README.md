@@ -31,8 +31,8 @@ cd evergiven
 ### Option 2: PostgreSQL
 
 ```bash
-# Run with PostgreSQL
-./docker-compose-wrapper.sh up -d
+# Run with PostgreSQL (requires more resources)
+./docker-compose-wrapper.sh -f docker-compose.postgres.yml up -d
 ```
 
 ## API Endpoints
@@ -235,6 +235,22 @@ docker-compose restart api
 sudo chown -R $USER:$USER ./data
 ```
 
+4. **CGO/SQLite build error:**
+```bash
+# Error: "Binary was compiled with 'CGO_ENABLED=0', go-sqlite3 requires cgo to work"
+# Solution: Use the provided Dockerfile which enables CGO automatically
+docker build -t evergiven .
+```
+
+5. **Docker Compose command not found:**
+```bash
+# Use the wrapper script
+./docker-compose-wrapper.sh up -d api
+
+# Or install Docker Compose plugin
+sudo apt-get install docker-compose-plugin
+```
+
 ### Performance Tuning
 
 For better Pi 5 performance:
@@ -285,9 +301,22 @@ go mod tidy
 go run main.go
 ```
 
+### Testing Builds
+```bash
+# Test both SQLite and PostgreSQL builds
+./test-build.sh
+
+# Note: CGO builds require GCC. If not available locally,
+# the Docker build will handle this automatically.
+```
+
 ### Build for Pi
 ```bash
-GOOS=linux GOARCH=arm64 go build -o evergiven
+# SQLite version (with CGO)
+CGO_ENABLED=1 GOOS=linux GOARCH=arm64 go build -o evergiven
+
+# PostgreSQL version (without CGO)
+CGO_ENABLED=0 GOOS=linux GOARCH=arm64 go build -o evergiven
 ```
 
 ## License

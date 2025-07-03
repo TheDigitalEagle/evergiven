@@ -1,12 +1,9 @@
 FROM golang:1.24.4-alpine
 
-# Install build dependencies for SQLite
-RUN apk add --no-cache gcc musl-dev sqlite-dev
-
 WORKDIR /app
 
-# Enable CGO for SQLite support
-ENV CGO_ENABLED=1
+# Disable CGO for static linking with PostgreSQL
+ENV CGO_ENABLED=0
 
 COPY go.mod go.sum ./
 RUN go mod download
@@ -14,11 +11,11 @@ RUN go mod download
 COPY . .
 RUN go build -o evergiven
 
-# Final stage with runtime dependencies
+# Final stage
 FROM alpine:latest
 
 # Install runtime dependencies
-RUN apk add --no-cache ca-certificates sqlite
+RUN apk add --no-cache ca-certificates
 
 WORKDIR /app
 
@@ -26,4 +23,4 @@ WORKDIR /app
 COPY --from=0 /app/evergiven .
 
 EXPOSE 8080
-CMD ["./evergiven"]
+CMD ["./evergiven"] 
