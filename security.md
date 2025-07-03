@@ -14,16 +14,22 @@
 
 ## 🏠 Home Network Setup
 
+**IMPORTANT**: ChatGPT Custom GPTs require HTTPS URLs and cannot use local IP addresses.
+
+### Solution: Use a Tunnel Service
+
 ```yaml
 # gpt-config.yaml
-base_url: "http://YOUR_PI_IP:8080"
+base_url: "https://evergiven.your-domain.com"  # Cloudflare Tunnel
+# or
+base_url: "https://abc123.ngrok.io"           # ngrok
 ```
 
-**Why this works:**
-- ChatGPT can access local network IPs
-- No SSL certificate needed
-- Simple and secure within your network
-- No external exposure
+**Why tunnels are needed:**
+- ChatGPT requires HTTPS URLs
+- Local IPs are not accessible to ChatGPT
+- Tunnels provide secure HTTPS access
+- No port forwarding required
 
 ## 🌐 Internet Access (If Needed)
 

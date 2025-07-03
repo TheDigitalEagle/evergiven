@@ -4,8 +4,14 @@
 name: "EverGiven Order Manager"
 description: "Manage and track orders from China with dual currency support (CNY/USD)"
 
-# Replace YOUR_PI_IP with your Raspberry Pi's actual IP address
-base_url: "http://YOUR_PI_IP:8080"
+# IMPORTANT: ChatGPT Custom GPTs require HTTPS URLs
+# Use one of the tunnel solutions below:
+
+# Option 1: Cloudflare Tunnel (recommended)
+base_url: "https://evergiven.your-domain.com"
+
+# Option 2: ngrok (alternative)
+# base_url: "https://abc123.ngrok.io"
 
 # API Actions Configuration
 actions:
