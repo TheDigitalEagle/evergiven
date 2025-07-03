@@ -3,9 +3,6 @@ info:
   title: EverGiven Order Management API
   description: Manage and track orders from China with dual currency support (CNY/USD)
   version: 1.0.0
-  contact:
-    name: EverGiven API Support
-    url: https://evergiven.focacciafowl.com
 
 servers:
   - url: https://evergiven.focacciafowl.com
@@ -30,7 +27,6 @@ paths:
                     example: "healthy"
                   timestamp:
                     type: string
-                    format: date-time
                     example: "2024-01-15T10:30:00Z"
                   database:
                     type: string
@@ -50,15 +46,6 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Order'
-        '500':
-          description: Database error
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  error:
-                    type: string
 
     post:
       summary: Create a new order
@@ -81,7 +68,6 @@ paths:
               properties:
                 dateOfOrder:
                   type: string
-                  format: date-time
                   description: Date and time of the order (ISO 8601 format)
                   example: "2024-01-15T10:30:00Z"
                 trackingNumber:
@@ -94,27 +80,22 @@ paths:
                   example: "Wireless Earbuds"
                 orderQuantity:
                   type: integer
-                  minimum: 1
                   description: Quantity of items ordered
                   example: 10
                 costPerItemCNY:
                   type: string
-                  pattern: '^\d+\.?\d*$'
                   description: Cost per item in Chinese Yuan
                   example: "299.99"
                 totalPerItemCNY:
                   type: string
-                  pattern: '^\d+\.?\d*$'
                   description: Total cost in Chinese Yuan
                   example: "2999.90"
                 costPerItemUSD:
                   type: string
-                  pattern: '^\d+\.?\d*$'
                   description: Cost per item in US Dollars
                   example: "42.50"
                 totalPerItemUSD:
                   type: string
-                  pattern: '^\d+\.?\d*$'
                   description: Total cost in US Dollars
                   example: "425.00"
       responses:
@@ -124,24 +105,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Order'
-        '400':
-          description: Invalid request data
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  error:
-                    type: string
-        '500':
-          description: Database error
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  error:
-                    type: string
 
   /orders/{id}:
     put:
@@ -155,7 +118,6 @@ paths:
           description: Order ID
           schema:
             type: integer
-            minimum: 1
           example: 1
       requestBody:
         required: true
@@ -166,7 +128,6 @@ paths:
               properties:
                 dateOfOrder:
                   type: string
-                  format: date-time
                   description: Date and time of the order (ISO 8601 format)
                   example: "2024-01-15T10:30:00Z"
                 trackingNumber:
@@ -179,27 +140,22 @@ paths:
                   example: "Wireless Earbuds"
                 orderQuantity:
                   type: integer
-                  minimum: 1
                   description: Quantity of items ordered
                   example: 10
                 costPerItemCNY:
                   type: string
-                  pattern: '^\d+\.?\d*$'
                   description: Cost per item in Chinese Yuan
                   example: "299.99"
                 totalPerItemCNY:
                   type: string
-                  pattern: '^\d+\.?\d*$'
                   description: Total cost in Chinese Yuan
                   example: "2999.90"
                 costPerItemUSD:
                   type: string
-                  pattern: '^\d+\.?\d*$'
                   description: Cost per item in US Dollars
                   example: "42.50"
                 totalPerItemUSD:
                   type: string
-                  pattern: '^\d+\.?\d*$'
                   description: Total cost in US Dollars
                   example: "425.00"
       responses:
@@ -209,24 +165,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Order'
-        '400':
-          description: Invalid request data
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  error:
-                    type: string
-        '500':
-          description: Database error
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  error:
-                    type: string
 
     delete:
       summary: Delete an order
@@ -239,20 +177,10 @@ paths:
           description: Order ID
           schema:
             type: integer
-            minimum: 1
           example: 1
       responses:
         '204':
           description: Order deleted successfully
-        '500':
-          description: Database error
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  error:
-                    type: string
 
 components:
   schemas:
@@ -265,7 +193,6 @@ components:
           example: 1
         dateOfOrder:
           type: string
-          format: date-time
           description: Date and time of the order
           example: "2024-01-15T10:30:00Z"
         trackingNumber:
@@ -304,14 +231,4 @@ components:
         - costPerItemCNY
         - totalPerItemCNY
         - costPerItemUSD
-        - totalPerItemUSD
-
-  securitySchemes:
-    apiKey:
-      type: apiKey
-      in: header
-      name: X-API-Key
-      description: Optional API key for authentication
-
-security:
-  - apiKey: [] 
+        - totalPerItemUSD 
