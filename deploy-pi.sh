@@ -85,6 +85,9 @@ if [ "$db_choice" = "2" ]; then
     $DOCKER_COMPOSE_CMD -f docker-compose.postgres.yml up -d
 else
     echo "💾 Using SQLite..."
+    echo "🔧 Ensuring CGO is enabled for SQLite..."
+    # Force rebuild to ensure CGO is enabled
+    docker build --no-cache -t evergiven-api .
     $DOCKER_COMPOSE_CMD up -d api
 fi
 

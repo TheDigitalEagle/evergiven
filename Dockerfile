@@ -5,14 +5,17 @@ RUN apk add --no-cache gcc musl-dev sqlite-dev
 
 WORKDIR /app
 
-# Enable CGO for SQLite support
+# Explicitly enable CGO for SQLite support
 ENV CGO_ENABLED=1
+ENV CC=gcc
 
 COPY go.mod go.sum ./
 RUN go mod download
 
 COPY . .
-RUN go build -o evergiven
+
+# Explicitly set CGO_ENABLED again and build
+RUN CGO_ENABLED=1 go build -o evergiven
 
 # Final stage with runtime dependencies
 FROM alpine:latest
